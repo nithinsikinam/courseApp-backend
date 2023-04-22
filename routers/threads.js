@@ -14,7 +14,7 @@ const fileStorage = multer.diskStorage({
 
 router.post("/createthread",multer({
     storage: fileStorage,
-}).single('selectedProductImage'),(req,res)=>{
+}).single('selectedProductImage'),async(req,res)=>{
     const retrievedImage = req.file.originalname;
     const questionHead = req.body.questionHead;
     const questionBody = req.body.questionBody;
@@ -23,6 +23,14 @@ router.post("/createthread",multer({
         return image.split('.')[0]
     }
 const idToBeUsed = extractIDFromImage(retrievedImage);
+
+    try{const threadNew = await thread.create({
+       
+    });
+    res.status(200).json({"status":"THREAD_CREATED"})
+}
+   catch(err){console.log(err)}
+
 })
 
 router.post("/defaultfeed",(req,res)=>{

@@ -5,21 +5,23 @@ const intrests = require("../schemas/interests")
 
 router.post("/getintrests",async (req,res)=>{
     const intrest = await intrests.find();
-    res.status(200).json({"intrests":intrest})
+    res.status(200).json({"intrests":intrest[0].intrest})
 })
 
 
 
 router.post("/addintrest",async(req,res)=>{
-    const intrest = await intrests.create({
+    try{const intrest = await intrests.create({
         intrest:req.body.intrest
     });
-    await intrest.save();
     res.status(200).json({"status":"INTREST_CREATED"})
+}
+   catch(err){console.log(err)}
+    
 })
 
 router.post("/addtag",async(req,res)=>{
-    const tag = await tag.create({
+    const tag = await tags.create({
         tag:req.body.tag
     });
     await tag.save();
