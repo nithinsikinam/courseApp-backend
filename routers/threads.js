@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const thread = require('../schema/thread');
+const thread = require('../schemas/thread');
 
 const multer = require("multer");
 const fileStorage = multer.diskStorage({
@@ -44,3 +44,4 @@ function authenticateToken(req,res,next){
         next()
     })
 }  
+module.exports=router

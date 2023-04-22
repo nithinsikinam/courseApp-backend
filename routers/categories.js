@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const tags = require("../schemas/tags")
 const intrests = require("../schemas/interests")
+
 router.post("/getintrests",async (req,res)=>{
     const intrest = await intrests.find();
     res.status(200).json({"intrests":intrest})
