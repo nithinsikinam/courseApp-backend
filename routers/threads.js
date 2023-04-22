@@ -1,10 +1,46 @@
 const express = require('express');
 const router = express.Router();
+const thread = require('../schema/thread');
+
+const multer = require("multer");
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './images/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
+router.post("/createthread",multer({
+    storage: fileStorage,
+}).single('selectedProductImage'),(req,res)=>{
+    const retrievedImage = req.file.originalname;
+    const questionHead = req.body.questionHead;
+    const questionBody = req.body.questionBody;
+    const tags  = req.body.tags;
+    function extractIDFromImage(image) {
+        return image.split('.')[0]
+    }
+const idToBeUsed = extractIDFromImage(retrievedImage);
+})
 
 router.post("/defaultfeed",(req,res)=>{
 
 })
 
-router.post("/feed",(req,res)=>{
-
+router.post("/feed",authenticateToken,(req,res)=>{
+ 
 })
+
+function authenticateToken(req,res,next){
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(token == null) return res.sendStatus(401)
+    
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user) =>{
+        if (err) return res.sendStatus(403)
+        req.user = user
+        next()
+    })
+}  

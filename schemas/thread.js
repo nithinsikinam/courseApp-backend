@@ -20,7 +20,7 @@ const threadSchema = new mongoose.Schema({
  tags:[String],
  questionHead:String,
  questionBody:String,
- questionImages:[String],
+ questionImages:String,
  replies:[replySchema],
  answers:[answerSchema]
 })

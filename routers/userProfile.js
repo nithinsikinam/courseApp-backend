@@ -19,7 +19,7 @@ router.post('/login', async (req,res) => {
     const search = await users.find({"userid":req.body.userid})
     if(search.length==1){      
     if(await bcrypt.compare(req.body.password,search[0]["password"])){
-    const id = req.body._id;
+    const id = req.body.userid;
     const user = {"id":id} ;
     const accessToken = jwt.sign(user,"f2277753af26589279dbbd49634346b89216521342715df6d596ec8b01c6ca5625cc270a5411e6629ef584d2d6f4b0258401a64631c0f6a3ca1e25feb3e64c80")   
     res.json({"status":"YES","access_token":accessToken})
