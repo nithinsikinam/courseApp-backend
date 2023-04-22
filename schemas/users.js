@@ -5,7 +5,6 @@ const usersSchema = new mongoose.Schema({
   EmailId:String,
   Password:String,
   Intrests:String,
-  ProfilePic:String,
   verified:Boolean
 })
 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const users = require('./schemas/users');
-
+const UserOTPVerification = require('./schemas/UserOTPVerification')
 
 router.post('/login', async (req,res) => {
     console.log(req.body._id);
@@ -23,21 +23,30 @@ router.post('/login', async (req,res) => {
 
 router.post('/register', async (req,res) => { 
 
-    const username = req.body.emailid
+    const userid = req.body.emailid.split("@")[0]
     
-    const search = await users.find({"_id":req.body._id})
+    const search = await users.find({"userid":userid})
     if(search.length!==0){
-        
-        res.json({"value":"no"})
+        res.status(400).json({"status":"CHOOSE_ANOTHER_EMAIL"})
     }
 else{
-    const hashedPassword = await bcrypt.hash(req.body.Password,10)
+    const hashedPassword = await bcrypt.hash(req.body.password,10)
+
     const user = await users.create({
-        Password:hashedPassword,
-        Ema
-})
+        userid:userid,
+        emailid:req.body.emailid,
+        password:hashedPassword,
+        intrests:intrests,
+        verified:false
+    }
+        )
 await user.save()
-res.json({"value":"yes"})
+
+
+    const otp = await UserOTPVerification.create({
+
+    })
+res.json({"status":"CREATED_TEMPORARY_ACCOUNT"})
     }
     })
 
