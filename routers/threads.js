@@ -12,6 +12,16 @@ const fileStorage = multer.diskStorage({
     }
 });
 
+router.post("/addanswer",(req,res)=>{
+
+})
+
+router.post("/addreply",(req,res)=>{
+    
+})
+
+
+
 router.post("/createthread",multer({
     storage: fileStorage,
 }).single('selectedProductImage'),async(req,res)=>{
