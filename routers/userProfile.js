@@ -4,6 +4,7 @@ const users = require('../schemas/users');
 const UserOTPVerification = require('../schemas/UserOTPVerification')
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 let transporter = nodemailer.createTransport({
     service:"gmail",
@@ -14,20 +15,19 @@ let transporter = nodemailer.createTransport({
 })
 
 router.post('/login', async (req,res) => {
-    console.log(req.body._id);
-     console.log(req.body.Password);
-    const search = await users.find({"_id":req.body._id})
+ 
+    const search = await users.find({"userid":req.body.userid})
     if(search.length==1){      
-    if(await bcrypt.compare(req.body.Password,search[0]["Password"])){
+    if(await bcrypt.compare(req.body.password,search[0]["password"])){
     const id = req.body._id;
     const user = {"id":id} ;
-    const accessToken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET)   
-    res.json({"value":"yes","access_token":accessToken})
+    const accessToken = jwt.sign(user,"f2277753af26589279dbbd49634346b89216521342715df6d596ec8b01c6ca5625cc270a5411e6629ef584d2d6f4b0258401a64631c0f6a3ca1e25feb3e64c80")   
+    res.json({"status":"YES","access_token":accessToken})
     }else{
-    res.json({"value":"no"})
+    res.json({"status":"INCORRECT_PASSWORD"})
    }}
     else{
-    res.json({"value":"no"})
+    res.json({"status":"NO_SUCH_USER"})
     }
 })
 
@@ -65,9 +65,9 @@ await user.save()
         userid:userid,
         otp:otpnumber,
         createdat:Date.now(),
-        expires:Date.now()+3600000,
+        expiresat:Date.now()+3600000,
     })
-
+    await otp.save()
     await transporter.sendMail(mailOptions)
 
     
@@ -76,16 +76,30 @@ res.json({"status":"CREATED_TEMPORARY_ACCOUNT"})
     }
     })
 
-function authenticateToken(req,res,next){
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if(token == null) return res.sendStatus(401)
     
-    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user) =>{
-        if (err) return res.sendStatus(403)
-        req.user = user
-        next()
+router.post("/verifyotp",async (req,res)=>{
+    const userid = req.body.emailid.split("@")[0]
+    const search = await UserOTPVerification.find({
+        "userid":userid,
     })
-}  
+    if(search.length==0){
+        res.status(400).json({"status":"ALREADY_VERIFIED"})
+    }else{
+        const expiresat = search[0].expiresat;
+        const otp = search[0].otp
+        if(expiresat<Date.now()){
+            await UserOTPVerification.deleteMany({"userid":userid})
+            res.status(400).json({"status":"CODE_EXPIRED"})
+        }else{
+            if(otp===req.body.otp){
+                res.status(200).json({"status":"OK"})
+            }else{
+                res.status(400).json({"status":"OTP_INCORRECT"})
+            }
+        }
+    }
+})
+
+
 
 module.exports=router
