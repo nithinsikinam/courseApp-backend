@@ -1,7 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const users = require('./schemas/users');
-const UserOTPVerification = require('./schemas/UserOTPVerification')
+const users = require('../schemas/users');
+const UserOTPVerification = require('../schemas/UserOTPVerification')
+const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
+
+let transporter = nodemailer.createTransport({
+    service:"gmail",
+    auth:{
+        user:"nithinsikinam@gmail.com",
+        pass:"bamifbupearynnaf"
+    }
+})
 
 router.post('/login', async (req,res) => {
     console.log(req.body._id);
@@ -36,16 +46,32 @@ else{
         userid:userid,
         emailid:req.body.emailid,
         password:hashedPassword,
-        intrests:intrests,
+        intrests:req.body.intrests,
         verified:false
     }
         )
 await user.save()
-
+   
+    const otpnumber = `${Math.floor(1000+Math.random()*9000)}`;
+    
+    const mailOptions = {
+        from:"nithinsikinam@gmail.com",
+        to:req.body.emailid,
+        subject:"verify your email",
+        html:`<p>Enter <b>${otpnumber}</b></p>`
+    }
 
     const otp = await UserOTPVerification.create({
-
+        userid:userid,
+        otp:otpnumber,
+        createdat:Date.now(),
+        expires:Date.now()+3600000,
     })
+
+    await transporter.sendMail(mailOptions)
+
+    
+
 res.json({"status":"CREATED_TEMPORARY_ACCOUNT"})
     }
     })
@@ -61,3 +87,5 @@ function authenticateToken(req,res,next){
         next()
     })
 }  
+
+module.exports=router

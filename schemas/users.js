@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
 const usersSchema = new mongoose.Schema({
-  UserId:String,
-  EmailId:String,
-  Password:String,
-  Intrests:String,
+  userid:String,
+  emailid:String,
+  password:String,
+  intrests:[String],
   verified:Boolean
 })
 
