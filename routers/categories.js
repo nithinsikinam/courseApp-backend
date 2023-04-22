@@ -8,7 +8,10 @@ router.post("/getintrests",async (req,res)=>{
     res.status(200).json({"intrests":intrest})
 })
 
-
+router.post("/gettags",async (req,res)=>{
+    const tag = await tags.find({ tag: { $regex:req.body.tag , $options: "i" } })
+    res.status(200).json({"tags":tag})
+})
 
 router.post("/addintrest",async(req,res)=>{
     const intrest = await intrests.create({
@@ -22,7 +25,7 @@ router.post("/addtag",async(req,res)=>{
     const tag = await tag.create({
         tag:req.body.tag
     });
-    await tag.save();
+    
     res.status(200).json({"status":"TAG_CREATED"})
 })
 
