@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const users = require('./schemas/users');
+
 
 router.post('/login', async (req,res) => {
     console.log(req.body._id);
@@ -20,6 +22,9 @@ router.post('/login', async (req,res) => {
 })
 
 router.post('/register', async (req,res) => { 
+
+    const username = req.body.emailid
+    
     const search = await users.find({"_id":req.body._id})
     if(search.length!==0){
         
@@ -29,8 +34,7 @@ else{
     const hashedPassword = await bcrypt.hash(req.body.Password,10)
     const user = await users.create({
         Password:hashedPassword,
-        EmailId:req.body.EmailId,
-        Interests:req.body.Interests,
+        Ema
 })
 await user.save()
 res.json({"value":"yes"})
