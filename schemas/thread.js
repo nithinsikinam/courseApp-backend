@@ -1,12 +1,6 @@
 const mongoose = require('mongoose')
 
-const answerSchema = new mongoose.Schema({
-    userid:String,
-    answer:String,
-    images:[String],
-    date:Date,
-    valid:Boolean
-})
+
 
 const replySchema = new mongoose.Schema({
     userid:String,
@@ -21,8 +15,7 @@ const threadSchema = new mongoose.Schema({
  questionHead:String,
  questionBody:String,
  questionImages:String,
- replies:[replySchema],
- answers:[answerSchema]
+ replies:[replySchema]
 })
 
 module.exports = mongoose.model('thread',threadSchema)

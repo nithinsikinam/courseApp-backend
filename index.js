@@ -4,9 +4,12 @@ const userProfile = require('./routers/userProfile')
 const thread = require('./routers/threads');
 const categories = require('./routers/categories')
 const path = require('path');
-const app = express();
+const cors = require('cors');
 
+const app = express();
+app.use(cors())
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use("/userProfile",userProfile);
 app.use("/thread",thread)
