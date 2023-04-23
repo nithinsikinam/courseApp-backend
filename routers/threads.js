@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const threads = require('../schemas/thread');
+const privateFeed = require('../schemas/privateFeed')
 const multer = require("multer");
 const nodemailer = require('nodemailer');
 const users = require('../schemas/users');
@@ -28,12 +29,15 @@ const storage = multer.diskStorage({
 })
 
 
-router.post("/addanswer",(req,res)=>{
-
-})
-
-router.post("/addreply",(req,res)=>{
-    
+router.post('/privatefeed',authenticateToken, async(req,res)=>{
+    const thread = await privateFeed.create({ 
+        userid:req.user.id,
+        touserid:req.body.id,
+        date:Date(),
+        questionHead:req.body.questionhead,
+        questionBody:req.body.questionbody,
+    })
+    res.status(200).json({"status":"SUCCESS"})
 })
 
 
@@ -67,9 +71,7 @@ router.post("/replythread",authenticateToken,async (req,res)=>{
         { $push: { replies: { userid, reply } } },
         { new: true }
       );
-        console.log(thread.userid)
         const user = await users.findOne({userid: thread.userid})
-        console.log(user.emailid)
       const mailOptions = {
         from:"nithinsikinam@gmail.com",
         to:user.emailid,
