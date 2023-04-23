@@ -16,7 +16,7 @@ let transporter = nodemailer.createTransport({
 
 router.post('/login', async (req,res) => {
  
-    const search = await users.find({"userid":req.body.userid})
+    const search = await users.find({"userid":req.body.userid,"verified":true})
     if(search.length==1){      
     if(await bcrypt.compare(req.body.password,search[0]["password"])){
     const id = req.body.userid;
@@ -92,6 +92,7 @@ router.post("/verifyotp",async (req,res)=>{
             res.status(400).json({"status":"CODE_EXPIRED"})
         }else{
             if(otp===req.body.otp){
+                await users.findOneAndUpdate({"userid":userid},{"verified":true})
                 res.status(200).json({"status":"OK"})
             }else{
                 res.status(400).json({"status":"OTP_INCORRECT"})

@@ -58,8 +58,13 @@ router.post("/defaultfeed",async(req,res)=>{
  res.status(200).json({"status":"SUCCESS","feed":feed})
 })
 
-router.post("/feed",authenticateToken,(req,res)=>{
+router.post("/feed",authenticateToken,async (req,res)=>{
+    console.log(req.user.id)
+ const user = await users.findOne({"userid":req.user.id})
  
+ const feed = await threads.find({intrests:{$in:user.intrests}})
+
+ res.status(200).json({"status":"SUCCESS","feed":feed})
 })
 
 router.post("/replythread",authenticateToken,async (req,res)=>{
