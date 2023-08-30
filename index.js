@@ -5,7 +5,7 @@ const thread = require('./routers/threads');
 const categories = require('./routers/categories')
 const path = require('path');
 const cors = require('cors');
-
+//githubrocks
 const app = express();
 app.use(cors())
 app.use(express.json());
